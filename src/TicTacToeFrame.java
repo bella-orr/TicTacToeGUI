@@ -14,22 +14,21 @@ public class TicTacToeFrame extends JFrame implements ActionListener {
 
     //JButtons and JButtons array
     JButton quitBtn;
-    JButton btn;
-    JButton[] board = new JButton[9];
+    JButton[][] board = new JButton[3][3];
+    int size = 3;
 
 
     //game declarations
     boolean finished = false;
     boolean playing = true;
-    boolean isWin = false;
     String player = "X";
     int moveCnt = 0;
-    int i = -1;
     final int MOVES_FOR_WIN = 5;
     final int MOVES_FOR_TIE = 7;
 
 
-    public TicTacToeFrame() {
+    public TicTacToeFrame() //create tic tac toe
+    {
         mainPnl = new JPanel();
         mainPnl.setLayout(new BorderLayout());
 
@@ -41,28 +40,35 @@ public class TicTacToeFrame extends JFrame implements ActionListener {
 
         add(mainPnl);
         setSize(600, 600);
+        setTitle("TicTacToe Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
 
     }
 
-    public void createBoardPnl() {
+    public void createBoardPnl()
+    {
         boardPnl = new JPanel();
         boardPnl.setLayout(new GridLayout(3, 3));
 
-        for (int i = 0; i < 9; i++) {
-            board[i] = new JButton();
-            board[i].setFont(new Font("Sans Serif", Font.BOLD, 125));
-            boardPnl.add(board[i]);
 
-            board[i].addActionListener(this);
+        for (int row= 0; row < size; row++)
+        {
+            for (int col= 0; col < size; col++)
+            {
+                board[row][col] = new JButton();
+                board[row][col].setFont(new Font("Sans Serif", Font.BOLD, 125));
+                boardPnl.add(board[row][col]);
+
+                board[row][col].addActionListener(this);}
         }
 
     }
 
 
-    public void createButtonPnl() {
+    public void createButtonPnl()  //panel to display quit button
+    {
         buttonPnl = new JPanel();
         buttonPnl.setLayout(new GridLayout(1, 1));
 
@@ -72,20 +78,23 @@ public class TicTacToeFrame extends JFrame implements ActionListener {
         buttonPnl.add(quitBtn);
     }
 
-    public void clearBoard() {
-        playing = true;
+    public void clearBoard() //if the game is played again, board is cleared and move count is 0
+    {
         moveCnt = 0;
+        player = "X"; //sets to first player again
 
         // sets all the board elements to a space
-        for (int i = 0; i < 9; i++)
+        for (int row = 0; row < size; row++)
         {
-            board[i].setText("");
+            for (int col = 0; col < size; col++)
+            {
+            board[row][col].setText("");
+            }
         }
 
-        player = "X";
     }
 
-    public void switchPlayer()
+    public void switchPlayer() // switches between x and o
     {
         if (player.equals("X"))
         {
@@ -98,11 +107,11 @@ public class TicTacToeFrame extends JFrame implements ActionListener {
         }
     }
 
-    public boolean isValidMove(int i)
+    public boolean isValidMove(int row, int col)//checks to see if there is nothing in the selected space
     {
         boolean retVal = false;
 
-        if (board[i].getText().equals(""))
+        if (board[row][col].getText().equals(""))
         {
             retVal = true;
 
@@ -111,128 +120,225 @@ public class TicTacToeFrame extends JFrame implements ActionListener {
 
     }
 
-    public boolean isWin()
+    public boolean isWin() //checks for win
     {
         if (isColWin(player) == true || isRowWin(player) == true || isDiagnalWin(player) == true)
         {
-            return true;
+            return true; //there is a win on the board
         }
 
-        return false;
+        return false; //no win on the board
     }
 
-    public boolean isDiagnalWin(String player) {
+    public boolean isDiagnalWin(String player)
+    {
         // checks for a diagonal win for the specified player
 
-        if (board[0].getText().equals(player) && board[4].getText().equals(player) && board[8].getText().equals(player)) {
-            return true;
+        if (board[0][0].getText().equals(player) && board[1][1].getText().equals(player) && board[2][2].getText().equals(player))
+        {
+            return true;//diagonal win, left to right
         }
 
-        if (board[2].getText().equals(player) && board[4].getText().equals(player) && board[6].getText().equals(player)) {
-            return true;
+        if (board[0][2].getText().equals(player) && board[1][1].getText().equals(player) && board[2][0].getText().equals(player))
+        {
+            return true;//diagonal win right to left
         }
-        return false;
+        return false; //no diagonal win
     }
 
 
-    public boolean isColWin(String player) {
+    public boolean isColWin(String player)
+    {
         // checks for a col win for specified player
-        if (board[0].getText().equals(player) && board[3].getText().equals(player) && board[6].getText().equals(player)) {
-            return true;
+
+        for(int col = 0; col < size; col ++)
+        {
+            if (board[0][col].getText().equals(player) && board[1][col].getText().equals(player) && board[2][col].getText().equals(player))
+                {
+                    return true;// there is a col win
+                }
         }
-        if (board[1].getText().equals(player) && board[4].getText().equals(player) && board[7].getText().equals(player)) {
-            return true;
-        }
-        if (board[2].getText().equals(player) && board[5].getText().equals(player) && board[8].getText().equals(player)) {
-            return true;
-        }
+
 
         return false; // no col win
     }
 
-    public boolean isRowWin(String player) {
+    public boolean isRowWin(String player)
+    {
         // checks for a row win for the specified player
-        if (board[0].getText().equals(player) && board[1].getText().equals(player) && board[2].getText().equals(player)) {
-
-            return true;
-        }
-
-        if (board[3].getText().equals(player) && board[4].getText().equals(player) && board[5].getText().equals(player)) {
-
-            return true;
-        }
-
-        if (board[6].getText().equals(player) && board[7].getText().equals(player) && board[8].getText().equals(player)) {
-
-            return true;
+        for(int row = 0; row < size; row ++)
+        {
+            if (board[row][0].getText().equals(player) && board[row][1].getText().equals(player) && board[row][2].getText().equals(player))
+            {
+                return true; //row win
+            }
         }
         return false; // no row win
+    }
+
+    public boolean isTie()
+    {
+        boolean xFlag = false;
+        boolean oFlag = false;
+        // Check all 8 win vectors for an X and O so
+        // no win is possible
+        // Check for row ties
+        for(int row=0; row < size; row++)
+        {
+            if(board[row][0].getText().equals("X") ||
+                    board[row][1].getText().equals("X") ||
+                    board[row][2].getText().equals("X"))
+            {
+                xFlag = true; // there is an X in this row
+            }
+            if(board[row][0].getText().equals("O") ||
+                    board[row][1].getText().equals("O") ||
+                    board[row][2].getText().equals("O"))
+            {
+                oFlag = true; // there is an O in this row
+            }
+
+            if(! (xFlag && oFlag) )
+            {
+                return false; // No tie can still have a row win
+            }
+
+            xFlag = oFlag = false;
+
+        }
+        // Now scan the columns
+        for(int col=0; col < size; col++)
+        {
+            if(board[0][col].getText().equals("X") ||
+                    board[1][col].getText().equals("X") ||
+                    board[2][col].getText().equals("X"))
+            {
+                xFlag = true; // there is an X in this col
+            }
+            if(board[0][col].getText().equals("O") ||
+                    board[1][col].getText().equals("O") ||
+                    board[2][col].getText().equals("O"))
+            {
+                oFlag = true; // there is an O in this col
+            }
+
+            if(! (xFlag && oFlag) )
+            {
+                return false; // No tie can still have a col win
+            }
+        }
+        // Now check for the diagonals
+        xFlag = oFlag = false;
+
+        if(board[0][0].getText().equals("X") ||
+                board[1][1].getText().equals("X") ||
+                board[2][2].getText().equals("X") )
+        {
+            xFlag = true;
+        }
+        if(board[0][0].getText().equals("O") ||
+                board[1][1].getText().equals("O") ||
+                board[2][2].getText().equals("O") )
+        {
+            oFlag = true;
+        }
+        if(! (xFlag && oFlag) )
+        {
+            return false; // No tie can still have a diag win
+        }
+        xFlag = oFlag = false;
+
+        if(board[0][2].getText().equals("X") ||
+                board[1][1].getText().equals("X") ||
+                board[2][0].getText().equals("X") )
+        {
+            xFlag =  true;
+        }
+        if(board[0][2].getText().equals("O") ||
+                board[1][1].getText().equals("O") ||
+                board[2][0].getText().equals("O") )
+        {
+            oFlag =  true;
+        }
+        if(! (xFlag && oFlag) )
+        {
+            return false; // No tie can still have a diag win
+        }
+
+        // Checked every vector so I know I have a tie
+        return true;
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
-                for (int i = 0; i < 9; i++)
-                {
-                    if (e.getSource() == board[i])
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (e.getSource() == board[row][col]) {
+                    if (isValidMove(row, col) == false) {
+                        JOptionPane.showMessageDialog(null, "Invalid move, try again.");
+                    } else //valid move
                     {
-                        if (isValidMove(i) == false)
-                        {
-                            if (player == "O")
-                            {
-                                JOptionPane.showMessageDialog(null, "Invalid move, try again.");
-                            } else
-                            {
-                                JOptionPane.showMessageDialog(null, "Invalid move, try again.");
+                        board[row][col].setText(player); //adds text to board
+                        moveCnt++; //adds to move count
 
+                        if (moveCnt >= MOVES_FOR_WIN)//checks for wins in win count
+                        {
+                            if (isWin() == false)// no win on the board
+                            {
+                                if (moveCnt >= MOVES_FOR_TIE)//checks for ties
+                                {
+                                    if (isTie())//tie
+                                    {
+                                        int reply = JOptionPane.showConfirmDialog(null, "It's a tie!\n" + "Do you want to play again?", "Play again", JOptionPane.YES_NO_OPTION);
+
+                                        if (reply == JOptionPane.YES_OPTION)//game resets to play again
+                                        {
+                                            clearBoard();
+                                            finished = false;
+                                        }
+                                        else//game quits, player is done playing
+                                        {
+                                            System.exit(0);
+                                        }
+                                    }
+
+                                    else{switchPlayer();}
+                                }
+
+                                else{switchPlayer();}
+
+                            }
+
+                            else//there is a win on the board
+                            {
+                                int reply = JOptionPane.showConfirmDialog(null, "Player " + player + " wins!\n" + "Do you want to play again?", "Play again", JOptionPane.YES_NO_OPTION);
+                                if (reply == JOptionPane.YES_OPTION) //resets board
+                                {
+                                    clearBoard();
+                                    finished = false;
+                                }
+                                //game ends
+                                else {
+                                    System.exit(0);
+                                }
                             }
 
                         }
 
                         else
                         {
-                            board[i].setText(player);
-                            moveCnt++;
-
-                            if(moveCnt >= MOVES_FOR_WIN)
-                            {
-                                if(isWin() == false)
-                                {
-                                    switchPlayer();
-                                }
-
-
-                                else
-                                {
-                                    int reply = JOptionPane.showConfirmDialog(null, "Player " + player + " wins!\n" + "Do you want to play again?", "Play again", JOptionPane.YES_NO_OPTION);
-                                        if(reply == JOptionPane.YES_OPTION)
-                                        {
-                                            clearBoard();
-                                            finished = false;
-                                        }
-
-                                        else
-                                        {
-                                            System.exit(0);
-                                        }
-                                }
-
-                            }
-
-                            else
-                            {
-                                switchPlayer();
-                            }
-
-                            System.out.println(moveCnt);
+                            switchPlayer();
                         }
-
                     }
 
                 }
+            }
+        }
     }
 }
+
 
 
 
